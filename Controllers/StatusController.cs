@@ -16,12 +16,13 @@ namespace Pagos.Backend.Controllers
             this.response = response;
             this._statusQuery = statusProvider;
         }
+
         [HttpGet]
-        public GenericDTO Status()
+        public async Task<GenericDTO> StatusAsync()
         {
             try
             {
-                var lstStatus = _statusQuery.GetStatus();
+                var lstStatus = await _statusQuery.GetStatusAsync();
                 response.Success = 1;
                 response.Data = lstStatus;
             }

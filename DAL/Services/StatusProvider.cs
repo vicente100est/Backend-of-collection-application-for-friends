@@ -1,17 +1,17 @@
 ﻿using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.Data;
-using Pagos.Backend.Models.Entity;
 
 namespace Pagos.Backend.DAL.Services
 {
     public class StatusProvider : IStatusProvider
     {
-        public List<StatusP> GetStatus()
+        public Task<ICollection<StatusP>> GetStatusAsync()
         {
             using (DeudaContext db = new DeudaContext())
             {
                 var lstStatus = db.StatusPs.ToList();
-                return lstStatus;
+
+                return Task.FromResult((ICollection<StatusP>)lstStatus);
             }
         }
     }

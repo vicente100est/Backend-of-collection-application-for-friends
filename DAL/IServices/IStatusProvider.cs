@@ -1,9 +1,10 @@
 ﻿using Pagos.Backend.Data;
+using Pagos.Backend.DTO;
 
 namespace Pagos.Backend.DAL.IServices
 {
     public interface IStatusProvider
     {
-        List<StatusP> GetStatus();
+        Task<ICollection<StatusP>> GetStatusAsync();
     }
 }

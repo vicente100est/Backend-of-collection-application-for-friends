@@ -7,8 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<GenericDTO>();
-builder.Services.AddScoped<IStatusProvider, StatusProvider>();
+builder.Services.AddTransient<GenericDTO>();
+builder.Services.AddTransient<IStatusProvider, StatusProvider>();
+builder.Services.AddTransient<IServicioProvider, ServicioProvider>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
