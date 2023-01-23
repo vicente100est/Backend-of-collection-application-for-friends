@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddTransient<GenericDTO>();
 builder.Services.AddTransient<IStatusProvider, StatusProvider>();
 builder.Services.AddTransient<IServicioProvider, ServicioProvider>();
+builder.Services.AddTransient<IUsuarioProvider, UsuarioProvider>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

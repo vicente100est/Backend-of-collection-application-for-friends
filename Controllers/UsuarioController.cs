@@ -7,26 +7,26 @@ namespace Pagos.Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ServicioController : ControllerBase
+    public class UsuarioController : ControllerBase
     {
         public GenericDTO response;
-        private readonly IServicioProvider _servicioQuery;
+        private readonly IUsuarioProvider _userQuery;
 
-        public ServicioController(GenericDTO response, IServicioProvider servicioProvider)
+        public UsuarioController(GenericDTO response, IUsuarioProvider userProvider)
         {
             this.response = response;
-            this._servicioQuery = servicioProvider;
+            this._userQuery = userProvider;
         }
 
         [HttpGet]
-        public async Task<GenericDTO> GetServicesAsync()
+        public async Task<GenericDTO> GetUserAsync()
         {
             try
             {
-                var lstService = await _servicioQuery.GetServicesAsync();
+                var lstUsers = await _userQuery.GetUserAsync();
 
                 response.Success = 1;
-                response.Data = lstService;
+                response.Data = lstUsers;
             }
 
             catch (Exception ex)
@@ -38,14 +38,14 @@ namespace Pagos.Backend.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<GenericDTO> GetServiceByIdAsync(int id)
+        public async Task<GenericDTO> GetUserByIdAsync(int id)
         {
             try
             {
-                var service = await _servicioQuery.GetServiceByIdAsync(id);
+                var user = await _userQuery.GetUserByIdAsync(id);
 
                 response.Success = 1;
-                response.Data = service;
+                response.Data = user;
             }
 
             catch (Exception ex)
@@ -57,16 +57,14 @@ namespace Pagos.Backend.Controllers
         }
 
         [HttpPost]
-        public GenericDTO CreateService(ServicioEntity serviceRequest)
+        public GenericDTO CreateUser(UsuarioEntity userRequest)
         {
             try
             {
-                var serviceAdd = _servicioQuery.CreateService(serviceRequest);
+                var userAdd = _userQuery.CreateUser(userRequest);
 
-                if (serviceAdd == true)
-                {
+                if (userAdd == true)
                     response.Success = 1;
-                }
             }
 
             catch (Exception ex)
@@ -78,14 +76,13 @@ namespace Pagos.Backend.Controllers
         }
 
         [HttpPut("{id}")]
-
-        public GenericDTO UpdateService(int id, ServicioEntity serviceRequest)
+        public GenericDTO UpdateUser(int id, UsuarioEntity userRequest)
         {
             try
             {
-                var serviceUpDate = _servicioQuery.UpdateService(id, serviceRequest);
+                var userUpDate = _userQuery.UpdateUser(id, userRequest);
 
-                if (serviceUpDate == true)
+                if (userUpDate == true)
                     response.Success = 1;
             }
 
@@ -98,13 +95,13 @@ namespace Pagos.Backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public GenericDTO DeleteService(int id)
+        public GenericDTO DeleteUser(int id)
         {
             try
             {
-                var serviceDelete = _servicioQuery.DeleteService(id);
+                var userDelete = _userQuery.DeleteUser(id);
 
-                if (serviceDelete == true)
+                if (userDelete == true)
                     response.Success = 1;
             }
 
