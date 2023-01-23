@@ -7,6 +7,7 @@ namespace Pagos.Backend.DAL.Services
 {
     public class ServicioProvider : IServicioProvider
     {
+        bool isSuccess = false;
         public Task<Servicio> GetServiceByIdAsync(int id)
         {
             using (var db = new DeudaContext())
@@ -37,7 +38,9 @@ namespace Pagos.Backend.DAL.Services
                 db.Servicios.Add(serviceDb);
                 db.SaveChanges();
 
-                return true;
+                isSuccess = true;
+
+                return isSuccess;
             }
         }
 
@@ -51,7 +54,9 @@ namespace Pagos.Backend.DAL.Services
                 db.Entry(serviceDB).State = EntityState.Modified;
                 db.SaveChanges();
 
-                return true;
+                isSuccess = true;
+
+                return isSuccess;
             }
         }
 
@@ -63,7 +68,9 @@ namespace Pagos.Backend.DAL.Services
                 db.Remove(serviceDB);
                 db.SaveChanges();
 
-                return true;
+                isSuccess = true;
+
+                return isSuccess;
             }
         }
     }
