@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pagos.Backend.DAL.IServices;
-using Pagos.Backend.Data;
 using Pagos.Backend.DTO;
 using Pagos.Backend.Models.Entity;
 
@@ -24,23 +23,10 @@ namespace Pagos.Backend.Controllers
         {
             try
             {
-                using (var db = new DeudaContext())
-                {
-                    var lstUserService =
-                        from svc in db.Servicios
-                        from user in db.Usuarios
-                        from us in db.UsuarioServicios
-                        where us.IdUsuario == user.IdUsuario && us.IdServicio == svc.IdServicio
-                        select new
-                        {
-                            us.IdUs,
-                            user.NombresUsuario,
-                            svc.NombreServicio
-                        };
+                var lstUsersServices = _userServiceQuery.GetUserService();
 
-                    response.Success = 1;
-                    response.Data = lstUserService.ToList();
-                }
+                response.Success = 1;
+                response.Data = lstUsersServices;
             }
 
             catch (Exception ex)
@@ -56,25 +42,9 @@ namespace Pagos.Backend.Controllers
         {
             try
             {
-                using (var db = new DeudaContext())
-                {
-                    var userService =
-                        from svc in db.Servicios
-                        from user in db.Usuarios
-                        from us in db.UsuarioServicios
-                        where us.IdUsuario == user.IdUsuario
-                            && us.IdServicio == svc.IdServicio
-                            && us.IdUs == id
-                        select new
-                        {
-                            us.IdUs,
-                            user.NombresUsuario,
-                            svc.NombreServicio
-                        };
-
-                    response.Success = 1;
-                    response.Data = userService.FirstOrDefault();
-                }
+                var userService = _userServiceQuery.GetUserServiceById(id);
+                response.Success = 1;
+                response.Data = userService;
             }
 
             catch (Exception ex)

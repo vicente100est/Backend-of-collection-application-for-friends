@@ -9,6 +9,47 @@ namespace Pagos.Backend.DAL.Services
     public class UsuarioServicioProvider : IUsuarioServicioProvider
     {
         bool isSuccess = false;
+        public object GetUserService()
+        {
+            using (var db = new DeudaContext())
+            {
+                var lstUserService =
+                    from svc in db.Servicios
+                    from user in db.Usuarios
+                    from us in db.UsuarioServicios
+                    where us.IdUsuario == user.IdUsuario && us.IdServicio == svc.IdServicio
+                    select new
+                    {
+                        us.IdUs,
+                        user.NombresUsuario,
+                        svc.NombreServicio
+                    };
+
+                return lstUserService.ToList();
+            }
+        }
+
+        public object GetUserServiceById(int id)
+        {
+            using (var db = new DeudaContext())
+            {
+                var userService =
+                    from svc in db.Servicios
+                    from user in db.Usuarios
+                    from us in db.UsuarioServicios
+                    where us.IdUsuario == user.IdUsuario
+                        && us.IdServicio == svc.IdServicio
+                        && us.IdUs == id
+                    select new
+                    {
+                        us.IdUs,
+                        user.NombresUsuario,
+                        svc.NombreServicio
+                    };
+
+                return userService.FirstOrDefault();
+            }
+        }
         public bool AddReferUser2Service(UsuarioServicioEntity uSE)
         {
             using (var db = new DeudaContext())
