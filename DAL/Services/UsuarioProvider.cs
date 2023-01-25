@@ -61,6 +61,24 @@ namespace Pagos.Backend.DAL.Services
             }
         }
 
+        public object GetUsersService(int id)
+        {
+            using (var db = new DeudaContext())
+            {
+                var lstUsersService =
+                    from svc in db.Servicios
+                    from us in db.UsuarioServicios
+                    where us.IdUsuario == id && us.IdServicio == svc.IdServicio
+                    select new
+                    {
+                        svc.NombreServicio,
+                        svc.PrecioServicio
+                    };
+
+                return lstUsersService.ToList();
+            }
+        }
+
         public bool UpdateUser(int id, UsuarioEntity usuario)
         {
             using (var db = new DeudaContext())
