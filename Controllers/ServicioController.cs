@@ -56,6 +56,25 @@ namespace Pagos.Backend.Controllers
             return response;
         }
 
+        [HttpGet("servicesuser/{id}")]
+        public GenericDTO GetServicesUser(int id)
+        {
+            try
+            {
+                var lstUsers = _servicioQuery.GetServicesUser(id);
+
+                response.Success = 1;
+                response.Data = lstUsers;
+            }
+
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
         [HttpPost]
         public GenericDTO CreateService(ServicioEntity serviceRequest)
         {
