@@ -61,18 +61,21 @@ namespace Pagos.Backend.DAL.Services
             }
         }
 
-        public object GetUsersService(int id)
+        public object GetUsersService(int idusuario)
         {
             using (var db = new DeudaContext())
             {
                 var lstUsersService =
                     from svc in db.Servicios
                     from us in db.UsuarioServicios
-                    where us.IdUsuario == id && us.IdServicio == svc.IdServicio
+                    where us.IdUsuario == idusuario && us.IdServicio == svc.IdServicio
                     select new
                     {
-                        svc.NombreServicio,
-                        svc.PrecioServicio
+                        ServicioId = svc.IdServicio,
+                        ServicioName = svc.NombreServicio,
+                        ServicioPriceU = svc.PrecioServicio/(from us in db.UsuarioServicios
+                                                            where us.IdServicio == svc.IdServicio
+                                                            select us).Count()
                     };
 
                 return lstUsersService.ToList();

@@ -7,6 +7,7 @@ namespace Pagos.Backend.DAL.IServices
     {
         Task<ICollection<Servicio>> GetServicesAsync();
         Task<Servicio> GetServiceByIdAsync(int id);
+        object GetServicesUser(int id);
         bool CreateService(ServicioEntity servicio);
         bool UpdateService(int id, ServicioEntity serviceEntity);
         bool DeleteService(int id);

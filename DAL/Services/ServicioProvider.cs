@@ -28,6 +28,24 @@ namespace Pagos.Backend.DAL.Services
             }
         }
 
+        public object GetServicesUser(int id)
+        {
+            using (var db = new DeudaContext())
+            {
+                var lstServicesUser =
+                    from us in db.UsuarioServicios
+                    from u in db.Usuarios
+                    where us.IdServicio == id && us.IdUsuario == u.IdUsuario
+                    select new
+                    {
+                        u.NombresUsuario,
+                        u.ApellidoUsuario
+                    };
+
+                return lstServicesUser.ToList();
+            }
+        }
+
         public bool CreateService(ServicioEntity servicio)
         {
             using (var db = new DeudaContext())

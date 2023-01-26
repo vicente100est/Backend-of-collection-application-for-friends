@@ -2,6 +2,7 @@
 using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.DTO;
 using Pagos.Backend.Models.Entity;
+using System.Net.WebSockets;
 
 namespace Pagos.Backend.Controllers
 {
@@ -56,7 +57,7 @@ namespace Pagos.Backend.Controllers
             return response;
         }
 
-        [HttpGet("userservice/{id}")]
+        [HttpGet("userservice/user={id}")]
         public GenericDTO GetUsersService(int id)
         {
             try
