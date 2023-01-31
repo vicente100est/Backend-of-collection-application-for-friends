@@ -8,11 +8,16 @@ namespace Pagos.Backend.DAL.Services
     public class ServicioProvider : IServicioProvider
     {
         bool isSuccess = false;
+        private readonly DeudaContext _db;
+        public ServicioProvider(DeudaContext db)
+        {
+            this._db = db;
+        }
         public Task<Servicio> GetServiceByIdAsync(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                var service = db.Servicios.Where(s => s.IdServicio == id).FirstOrDefault();
+                var service = _db.Servicios.Where(s => s.IdServicio == id).FirstOrDefault();
 
                 return Task.FromResult(service);
             }
@@ -20,9 +25,9 @@ namespace Pagos.Backend.DAL.Services
 
         public Task<ICollection<Servicio>> GetServicesAsync()
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                var lstService = db.Servicios.ToList();
+                var lstService = _db.Servicios.ToList();
 
                 return Task.FromResult((ICollection<Servicio>)lstService);
             }
@@ -30,11 +35,11 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetServicesUser(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var lstServicesUser =
-                    from us in db.UsuarioServicios
-                    from u in db.Usuarios
+                    from us in _db.UsuarioServicios
+                    from u in _db.Usuarios
                     where us.IdServicio == id && us.IdUsuario == u.IdUsuario
                     select new
                     {
@@ -48,13 +53,13 @@ namespace Pagos.Backend.DAL.Services
 
         public bool CreateService(ServicioEntity servicio)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 Servicio serviceDb = new Servicio();
                 serviceDb.NombreServicio = servicio.NombreServicio;
                 serviceDb.PrecioServicio = servicio.PrecioServicio;
-                db.Servicios.Add(serviceDb);
-                db.SaveChanges();
+                _db.Servicios.Add(serviceDb);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -64,13 +69,13 @@ namespace Pagos.Backend.DAL.Services
 
         public bool UpdateService(int id, ServicioEntity serviceEntity)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Servicio serviceDB = db.Servicios.Find(id);
+                Servicio serviceDB = _db.Servicios.Find(id);
                 serviceDB.NombreServicio = serviceEntity.NombreServicio;
                 serviceDB.PrecioServicio = serviceEntity.PrecioServicio;
-                db.Entry(serviceDB).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(serviceDB).State = EntityState.Modified;
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -80,11 +85,11 @@ namespace Pagos.Backend.DAL.Services
 
         public bool DeleteService(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Servicio serviceDB = db.Servicios.Find(id);
-                db.Remove(serviceDB);
-                db.SaveChanges();
+                Servicio serviceDB = _db.Servicios.Find(id);
+                _db.Remove(serviceDB);
+                _db.SaveChanges();
 
                 isSuccess = true;
 

@@ -8,17 +8,22 @@ namespace Pagos.Backend.DAL.Services
     public class MensualidadProvider : IMensualidadProvider
     {
         bool isSuccess = false;
+        private readonly DeudaContext _db;
+        public MensualidadProvider(DeudaContext db)
+        {
+            this._db = db;
+        }
         public bool CreateMonthlyPayment(MensualidadEntity monthlyPaymentEntity)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 Mensualidad monthDB = new Mensualidad();
                 monthDB.NombreMensualidad = monthlyPaymentEntity.NombreMensualidad;
                 monthDB.PrecioMensualidad = monthlyPaymentEntity.PrecioMensualidad;
                 monthDB.IdServicio = monthlyPaymentEntity.IdServicio;
 
-                db.Mensualidads.Add(monthDB);
-                db.SaveChanges();
+                _db.Mensualidads.Add(monthDB);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -28,12 +33,12 @@ namespace Pagos.Backend.DAL.Services
 
         public bool DeleteMonthlyPayment(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Mensualidad monthDB = db.Mensualidads.Find(id);
+                Mensualidad monthDB = _db.Mensualidads.Find(id);
 
-                db.Remove(monthDB);
-                db.SaveChanges();
+                _db.Remove(monthDB);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -43,11 +48,11 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetMonthlyPayment()
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var monthlyPayment =
-                    (from svc in db.Servicios
-                     from month in db.Mensualidads
+                    (from svc in _db.Servicios
+                     from month in _db.Mensualidads
                      where svc.IdServicio == month.IdServicio
                      select new
                      {
@@ -62,12 +67,12 @@ namespace Pagos.Backend.DAL.Services
         }
         public object GetMonthlyPaymentForUser(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var monthlyPayment =
-                    (from svc in db.Servicios
-                     from us in db.UsuarioServicios
-                     from month in db.Mensualidads
+                    (from svc in _db.Servicios
+                     from us in _db.UsuarioServicios
+                     from month in _db.Mensualidads
                      where svc.IdServicio == month.IdServicio && us.IdUsuario == id
                      select new
                      {
@@ -83,11 +88,11 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetMonthlyPaymentById(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var monthlyPaymentById =
-                    (from svc in db.Servicios
-                     from month in db.Mensualidads
+                    (from svc in _db.Servicios
+                     from month in _db.Mensualidads
                      where svc.IdServicio == month.IdServicio && month.IdMensualidad == id
                      select new
                      {
@@ -103,14 +108,14 @@ namespace Pagos.Backend.DAL.Services
 
         public bool UpdateMonthlyPayment(int id, MensualidadEntity monthlyPaymentEntity)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Mensualidad monthDB = db.Mensualidads.Find(id);
+                Mensualidad monthDB = _db.Mensualidads.Find(id);
                 monthDB.NombreMensualidad = monthlyPaymentEntity.NombreMensualidad;
                 monthlyPaymentEntity.IdServicio = monthlyPaymentEntity.IdServicio;
 
-                db.Entry(monthDB).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(monthDB).State = EntityState.Modified;
+                _db.SaveChanges();
 
                 isSuccess = true;
 

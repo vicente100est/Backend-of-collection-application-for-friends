@@ -8,9 +8,14 @@ namespace Pagos.Backend.DAL.Services
     public class PagosProvider : IPagosProvider
     {
         bool isSuccess = false;
+        private readonly DeudaContext _db;
+        public PagosProvider(DeudaContext db)
+        {
+            this._db = db;
+        }
         public bool CreatePayment(PagoEntity paymentEntity)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 Pago payment = new Pago();
                 payment.IdPago = Guid.NewGuid().ToString();
@@ -19,8 +24,8 @@ namespace Pagos.Backend.DAL.Services
                 payment.IdMensualidad = paymentEntity.IdMensualidad;
                 payment.IdUsuario = paymentEntity.IdUsuario;
 
-                db.Pagos.Add(payment);
-                db.SaveChanges();
+                _db.Pagos.Add(payment);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -30,12 +35,12 @@ namespace Pagos.Backend.DAL.Services
 
         public bool DeletePayment(string id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Pago pagoDb = db.Pagos.Find(id);
+                Pago pagoDb = _db.Pagos.Find(id);
 
-                db.Remove(pagoDb);
-                db.SaveChanges();
+                _db.Remove(pagoDb);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -45,13 +50,13 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetPaymentById(string idPayment)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var paymentById =
-                    (from pay in db.Pagos
-                     from sts in db.StatusPs
-                     from mon in db.Mensualidads
-                     from usr in db.Usuarios
+                    (from pay in _db.Pagos
+                     from sts in _db.StatusPs
+                     from mon in _db.Mensualidads
+                     from usr in _db.Usuarios
                      where pay.IdPago == idPayment &&
                          pay.IdStatus == sts.IdStatus &&
                          pay.IdMensualidad == mon.IdMensualidad &&
@@ -73,13 +78,13 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetPaymentByMonthlyPayment(int monthlyPayment)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var lstPaymentByMonth =
-                    (from pay in db.Pagos
-                     from sts in db.StatusPs
-                     from mon in db.Mensualidads
-                     from usr in db.Usuarios
+                    (from pay in _db.Pagos
+                     from sts in _db.StatusPs
+                     from mon in _db.Mensualidads
+                     from usr in _db.Usuarios
                      where pay.IdStatus == sts.IdStatus &&
                          pay.IdMensualidad == monthlyPayment &&
                          pay.IdMensualidad == mon.IdMensualidad &&
@@ -101,13 +106,13 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetPaymentByStatus(int idStatus)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var lstPaymetsByStatus =
-                    (from pay in db.Pagos
-                     from sts in db.StatusPs
-                     from mon in db.Mensualidads
-                     from usr in db.Usuarios
+                    (from pay in _db.Pagos
+                     from sts in _db.StatusPs
+                     from mon in _db.Mensualidads
+                     from usr in _db.Usuarios
                      where pay.IdStatus == idStatus &&
                          pay.IdStatus == sts.IdStatus &&
                          pay.IdMensualidad == mon.IdMensualidad &&
@@ -129,12 +134,12 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetPaymentForUser(int idUser)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var lstPaymentsUser =
-                    (from pay in db.Pagos
-                     from sts in db.StatusPs
-                     from mon in db.Mensualidads
+                    (from pay in _db.Pagos
+                     from sts in _db.StatusPs
+                     from mon in _db.Mensualidads
                      where pay.IdStatus == sts.IdStatus &&
                          pay.IdMensualidad == mon.IdMensualidad &&
                          pay.IdUsuario == idUser
@@ -151,15 +156,40 @@ namespace Pagos.Backend.DAL.Services
             }
         }
 
+        public object GetPaymentForUserAndStatus(int idUser, int idStatus)
+        {
+            using (_db)
+            {
+                var lstPaymentUserAndStatus =
+                     (from pay in _db.Pagos
+                     from sts in _db.StatusPs
+                     from mon in _db.Mensualidads
+                     where sts.IdStatus == idStatus &&
+                         pay.IdStatus == sts.IdStatus &&
+                         pay.IdMensualidad == mon.IdMensualidad &&
+                         pay.IdUsuario == idUser
+
+                     select new
+                     {
+                         pay.IdPago,
+                         pay.PrecioPago,
+                         sts.NombreStatus,
+                         mon.NombreMensualidad
+                     }).ToList();
+
+                return lstPaymentUserAndStatus;
+            }
+        }
+        
         public object GetPayments()
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var lstPayments =
-                    (from pay in db.Pagos
-                     from sts in db.StatusPs
-                     from mon in db.Mensualidads
-                     from usr in db.Usuarios
+                    (from pay in _db.Pagos
+                     from sts in _db.StatusPs
+                     from mon in _db.Mensualidads
+                     from usr in _db.Usuarios
                      where pay.IdStatus == sts.IdStatus &&
                          pay.IdMensualidad == mon.IdMensualidad &&
                          pay.IdUsuario == usr.IdUsuario
@@ -180,16 +210,16 @@ namespace Pagos.Backend.DAL.Services
 
         public bool UpDatePayment(string idPayment, PagoEntity paymentEntity)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Pago paymentDb = db.Pagos.Find(idPayment);
+                Pago paymentDb = _db.Pagos.Find(idPayment);
                 paymentDb.PrecioPago = paymentEntity.PrecioPago;
                 paymentDb.IdStatus = paymentEntity.IdStatus;
                 paymentDb.IdMensualidad = paymentEntity.IdMensualidad;
                 paymentEntity.IdUsuario = paymentEntity.IdUsuario;
 
-                db.Entry(paymentDb).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(paymentDb).State = EntityState.Modified;
+                _db.SaveChanges();
 
                 isSuccess = true;
 

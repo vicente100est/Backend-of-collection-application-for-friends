@@ -8,15 +8,21 @@ namespace Pagos.Backend.DAL.Services
 {
     public class UsuarioServicioProvider : IUsuarioServicioProvider
     {
-        bool isSuccess = false;
+        private readonly DeudaContext _db;
+        public bool isSuccess = false;
+        public UsuarioServicioProvider(DeudaContext db)
+        {
+            this._db = db;
+        }
+
         public object GetUserService()
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var lstUserService =
-                    from svc in db.Servicios
-                    from user in db.Usuarios
-                    from us in db.UsuarioServicios
+                    from svc in _db.Servicios
+                    from user in _db.Usuarios
+                    from us in _db.UsuarioServicios
                     where us.IdUsuario == user.IdUsuario && us.IdServicio == svc.IdServicio
                     select new
                     {
@@ -31,12 +37,12 @@ namespace Pagos.Backend.DAL.Services
 
         public object GetUserServiceById(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var userService =
-                    from svc in db.Servicios
-                    from user in db.Usuarios
-                    from us in db.UsuarioServicios
+                    from svc in _db.Servicios
+                    from user in _db.Usuarios
+                    from us in _db.UsuarioServicios
                     where us.IdUsuario == user.IdUsuario
                         && us.IdServicio == svc.IdServicio
                         && us.IdUs == id
@@ -52,13 +58,13 @@ namespace Pagos.Backend.DAL.Services
         }
         public bool AddReferUser2Service(UsuarioServicioEntity uSE)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 UsuarioServicio usuarioServicio = new UsuarioServicio();
                 usuarioServicio.IdUsuario = uSE.IdUsuario;
                 usuarioServicio.IdServicio = uSE.IdServicio;
-                db.UsuarioServicios.Add(usuarioServicio);
-                db.SaveChanges();
+                _db.UsuarioServicios.Add(usuarioServicio);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -68,11 +74,11 @@ namespace Pagos.Backend.DAL.Services
 
         public bool DeleteReferUser2Service(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                UsuarioServicio usuarioServicio = db.UsuarioServicios.Find(id);
-                db.Remove(usuarioServicio);
-                db.SaveChanges();
+                UsuarioServicio usuarioServicio = _db.UsuarioServicios.Find(id);
+                _db.Remove(usuarioServicio);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -81,13 +87,13 @@ namespace Pagos.Backend.DAL.Services
         }
         public bool UpdateReferUser2Service(int id, UsuarioServicioEntity uSE)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                UsuarioServicio userServiceDB = db.UsuarioServicios.Find(id);
+                UsuarioServicio userServiceDB = _db.UsuarioServicios.Find(id);
                 userServiceDB.IdUsuario = uSE.IdUsuario;
                 userServiceDB.IdServicio = uSE.IdServicio;
-                db.Entry(userServiceDB).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(userServiceDB).State = EntityState.Modified;
+                _db.SaveChanges();
 
                 isSuccess = true;
 

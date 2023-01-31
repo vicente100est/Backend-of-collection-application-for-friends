@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.DTO;
 using Pagos.Backend.Models.Entity;
@@ -65,6 +64,25 @@ namespace Pagos.Backend.Controllers
 
                 response.Success = 1;
                 response.Data = lstPaymentsByUser;
+            }
+
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        [HttpGet("payment/{idUsuario}/{idStatus}")]
+        public GenericDTO GetPaymentsByUserAndStatus(int idUsuario, int idStatus)
+        {
+            try
+            {
+                var lstPaymentByUser = _paymentsQuery.GetPaymentForUserAndStatus(idUsuario, idStatus);
+
+                response.Success = 1;
+                response.Data = lstPaymentByUser;
             }
 
             catch (Exception ex)
