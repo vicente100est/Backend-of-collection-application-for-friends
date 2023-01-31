@@ -9,18 +9,23 @@ namespace Pagos.Backend.DAL.Services
     public class UsuarioProvider : IUsuarioProvider
     {
         bool isSuccess = false;
+        private readonly DeudaContext _db;
+        public UsuarioProvider(DeudaContext db)
+        {
+            this._db = db;
+        }
 
         public bool CreateUser(UsuarioEntity usuario)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 Usuario userDB = new Usuario();
                 userDB.NombresUsuario = usuario.NombresUsuario;
                 userDB.ApellidoUsuario = usuario.ApellidoUsuario;
                 userDB.FechaNacimientoUsuario = usuario.FechaNacimientoUsuario;
                 userDB.TelefonoUsuario = Encrypt.GetSHA256(usuario.TelefonoUsuario);
-                db.Usuarios.Add(userDB);
-                db.SaveChanges();
+                _db.Usuarios.Add(userDB);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -30,11 +35,11 @@ namespace Pagos.Backend.DAL.Services
 
         public bool DeleteUser(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Usuario userDB = db.Usuarios.Find(id);
-                db.Remove(userDB);
-                db.SaveChanges();
+                Usuario userDB = _db.Usuarios.Find(id);
+                _db.Remove(userDB);
+                _db.SaveChanges();
 
                 isSuccess = true;
 
@@ -44,9 +49,9 @@ namespace Pagos.Backend.DAL.Services
 
         public Task<ICollection<Usuario>> GetUserAsync()
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                var users = db.Usuarios.ToList();
+                var users = _db.Usuarios.ToList();
 
                 return Task.FromResult((ICollection<Usuario>)users);
             }
@@ -54,26 +59,26 @@ namespace Pagos.Backend.DAL.Services
 
         public Task<Usuario> GetUserByIdAsync(int id)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                var user = db.Usuarios.Where(s => s.IdUsuario == id).FirstOrDefault();
+                var user = _db.Usuarios.Where(s => s.IdUsuario == id).FirstOrDefault();
                 return Task.FromResult(user);
             }
         }
 
         public object GetUsersService(int idusuario)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
                 var lstUsersService =
-                    from svc in db.Servicios
-                    from us in db.UsuarioServicios
+                    from svc in _db.Servicios
+                    from us in _db.UsuarioServicios
                     where us.IdUsuario == idusuario && us.IdServicio == svc.IdServicio
                     select new
                     {
                         ServicioId = svc.IdServicio,
                         ServicioName = svc.NombreServicio,
-                        ServicioPriceU = svc.PrecioServicio/(from us in db.UsuarioServicios
+                        ServicioPriceU = svc.PrecioServicio/(from us in _db.UsuarioServicios
                                                             where us.IdServicio == svc.IdServicio
                                                             select us).Count()
                     };
@@ -84,15 +89,15 @@ namespace Pagos.Backend.DAL.Services
 
         public bool UpdateUser(int id, UsuarioEntity usuario)
         {
-            using (var db = new DeudaContext())
+            using (_db)
             {
-                Usuario userDB = db.Usuarios.Find(id);
+                Usuario userDB = _db.Usuarios.Find(id);
                 userDB.NombresUsuario = usuario.NombresUsuario;
                 userDB.ApellidoUsuario = usuario.ApellidoUsuario;
                 userDB.FechaNacimientoUsuario = usuario.FechaNacimientoUsuario;
                 userDB.TelefonoUsuario = Encrypt.GetSHA256(usuario.TelefonoUsuario);
-                db.Entry(userDB).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(userDB).State = EntityState.Modified;
+                _db.SaveChanges();
 
                 isSuccess = true;
 

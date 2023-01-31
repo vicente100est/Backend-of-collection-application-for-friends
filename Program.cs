@@ -1,5 +1,6 @@
 using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.DAL.Services;
+using Pagos.Backend.Data;
 using Pagos.Backend.DTO;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddTransient<DeudaContext>();
 builder.Services.AddTransient<GenericDTO>();
 builder.Services.AddTransient<IStatusProvider, StatusProvider>();
 builder.Services.AddTransient<IServicioProvider, ServicioProvider>();

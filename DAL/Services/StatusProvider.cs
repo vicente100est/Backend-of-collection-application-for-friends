@@ -5,11 +5,16 @@ namespace Pagos.Backend.DAL.Services
 {
     public class StatusProvider : IStatusProvider
     {
+        private readonly DeudaContext _db;
+        public StatusProvider(DeudaContext db)
+        {
+            this._db = db;
+        }
         public Task<ICollection<StatusP>> GetStatusAsync()
         {
-            using (DeudaContext db = new DeudaContext())
+            using (_db)
             {
-                var lstStatus = db.StatusPs.ToList();
+                var lstStatus = _db.StatusPs.ToList();
 
                 return Task.FromResult((ICollection<StatusP>)lstStatus);
             }
