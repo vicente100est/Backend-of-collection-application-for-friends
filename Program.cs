@@ -4,10 +4,19 @@ using Pagos.Backend.Data;
 using Pagos.Backend.DTO;
 
 var builder = WebApplication.CreateBuilder(args);
+string MiCors = "MyCors";
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MiCors,
+        builder =>
+        {
+            builder.WithOrigins("*");
+        });
+});
 builder.Services.AddTransient<DeudaContext>();
 builder.Services.AddTransient<GenericDTO>();
 builder.Services.AddTransient<IStatusProvider, StatusProvider>();
@@ -24,13 +33,15 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(MiCors);
 
 app.UseAuthorization();
 
