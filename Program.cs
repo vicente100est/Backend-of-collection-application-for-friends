@@ -14,7 +14,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MiCors,
         builder =>
         {
+            builder.WithHeaders("*");
             builder.WithOrigins("*");
+            builder.WithMethods("*");
         });
 });
 builder.Services.AddTransient<DeudaContext>();
