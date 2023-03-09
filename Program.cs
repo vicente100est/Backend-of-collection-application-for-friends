@@ -27,6 +27,7 @@ builder.Services.AddTransient<IUsuarioProvider, UsuarioProvider>();
 builder.Services.AddTransient<IUsuarioServicioProvider, UsuarioServicioProvider>();
 builder.Services.AddTransient<IMensualidadProvider, MensualidadProvider>();
 builder.Services.AddTransient<IPagosProvider, PagosProvider>();
+builder.Services.AddTransient<IAdminProvider, AdminProvider>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
