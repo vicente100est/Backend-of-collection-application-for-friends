@@ -31,6 +31,7 @@ builder.Services.AddTransient<IMensualidadProvider, MensualidadProvider>();
 builder.Services.AddTransient<IPagosProvider, PagosProvider>();
 builder.Services.AddTransient<IAdminProvider, AdminProvider>();
 builder.Services.AddTransient<IAuthAdminProvider, AuthAdminProvider>();
+builder.Services.AddTransient<IAuthUsuarioProvider, AuthUsuarioProvider>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
