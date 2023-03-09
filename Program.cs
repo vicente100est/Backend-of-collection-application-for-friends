@@ -2,6 +2,8 @@ using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.DAL.Services;
 using Pagos.Backend.Data;
 using Pagos.Backend.DTO;
+using Pagos.Backend.Services.Auth.IService;
+using Pagos.Backend.Services.Auth.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 string MiCors = "MyCors";
@@ -28,6 +30,8 @@ builder.Services.AddTransient<IUsuarioServicioProvider, UsuarioServicioProvider>
 builder.Services.AddTransient<IMensualidadProvider, MensualidadProvider>();
 builder.Services.AddTransient<IPagosProvider, PagosProvider>();
 builder.Services.AddTransient<IAdminProvider, AdminProvider>();
+builder.Services.AddTransient<IAuthAdminProvider, AuthAdminProvider>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
