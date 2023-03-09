@@ -24,11 +24,17 @@ namespace Pagos.Backend.DAL.Services
                 string passEncrypt = Encrypt.GetSHA256(adminModel.ContrasenaAdministrador);
 
                 var authAdmin = _db.Administradors.Where(a => a.NombreAdministrador == adminModel.NombreAdministrador
-                                                        && a.ContrasenaAdministrador == adminModel.ContrasenaAdministrador)
+                                                        && a.ContrasenaAdministrador == passEncrypt)
                     .FirstOrDefault();
-                if (authAdmin == null) return null;
 
-                adminResponse.NombreAdministrador = authAdmin.NombreAdministrador;
+                if (authAdmin == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    adminResponse.NombreAdministrador = authAdmin.NombreAdministrador;
+                }
             }
 
             return adminResponse;

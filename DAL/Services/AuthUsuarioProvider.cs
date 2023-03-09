@@ -27,8 +27,16 @@ namespace Pagos.Backend.DAL.Services
                                                 && u.TelefonoUsuario == telEncrypt)
                     .FirstOrDefault();
 
-                userResponse.IdUsuario = authUser.IdUsuario;
-                userResponse.NombreUsuario = authUser.NombresUsuario;
+                if (authUser == null)
+                {
+                    return null;
+                }
+
+                else
+                {
+                    userResponse.IdUsuario = authUser.IdUsuario;
+                    userResponse.NombreUsuario = authUser.NombresUsuario;
+                }
             }
 
             return userResponse;
