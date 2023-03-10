@@ -1,6 +1,8 @@
-﻿using Pagos.Backend.DAL.IServices;
+﻿using Microsoft.Extensions.Options;
+using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.Data;
 using Pagos.Backend.DTO;
+using Pagos.Backend.Models.Common;
 using Pagos.Backend.Models.Entity;
 using Pagos.Backend.Tools;
 
@@ -10,11 +12,13 @@ namespace Pagos.Backend.DAL.Services
     {
         public UserDTO userResponse;
         private readonly DeudaContext _db;
+        private readonly AppSettings _appSettings;
 
-        public AuthUsuarioProvider(UserDTO response, DeudaContext db)
+        public AuthUsuarioProvider(UserDTO response, DeudaContext db, IOptions<AppSettings> appSettings)
         {
             this.userResponse = response;
             this._db = db;
+            this._appSettings = appSettings.Value;
         }
 
         public UserDTO AuthUser(UserAuthEntity userModel)
@@ -36,10 +40,16 @@ namespace Pagos.Backend.DAL.Services
                 {
                     userResponse.IdUsuario = authUser.IdUsuario;
                     userResponse.NombreUsuario = authUser.NombresUsuario;
+                    userResponse.TokenUsuario = GetUserToken(authUser);
                 }
             }
 
             return userResponse;
+        }
+
+        private string GetUserToken(Usuario user)
+        {
+            return "Hi";
         }
     }
 }

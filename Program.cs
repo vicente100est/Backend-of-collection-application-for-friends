@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.DAL.Services;
 using Pagos.Backend.Data;
@@ -6,12 +8,12 @@ using Pagos.Backend.DTO;
 using Pagos.Backend.Models.Common;
 using Pagos.Backend.Services.Auth.IService;
 using Pagos.Backend.Services.Auth.Service;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 string MiCors = "MyCors";
 
-var appSettings = builder.Configuration.GetSection("AppSettings");
-//var dbContext = builder.Configuration["ConnectionStrings:DeudaDB"];
+var appSettingsSection = builder.Configuration.GetSection("AppSettings");
 
 // Add services to the container.
 
@@ -27,11 +29,34 @@ builder.Services.AddCors(options =>
         });
 });
 
+//DbContext
 builder.Services.AddMySql<DeudaContext>(builder.Configuration.GetConnectionString("DeudaDB"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.37-mariadb"));
 
-//Sevret
-builder.Services.Configure<AppSettings>(appSettings);
+//Secret
+builder.Services.Configure<AppSettings>(appSettingsSection);
 
+//JWT
+var appSettings = appSettingsSection.Get<AppSettings>();
+var keyToken = Encoding.ASCII.GetBytes(appSettings.Secreto);
+
+builder.Services.AddAuthentication(d =>
+{
+    d.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    d.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(d =>
+{
+    d.RequireHttpsMetadata = false;
+    d.SaveToken = true;
+    d.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(keyToken),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
+//Services
 builder.Services.AddTransient<DeudaContext>();
 builder.Services.AddTransient<GenericDTO>();
 builder.Services.AddTransient<AdminDTO>();
@@ -64,6 +89,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseHttpsRedirection();
 
 app.UseCors(MiCors);
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
