@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.Data;
 using Pagos.Backend.DTO;
 using Pagos.Backend.Models.Common;
 using Pagos.Backend.Models.Entity;
 using Pagos.Backend.Tools;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Pagos.Backend.DAL.Services
 {
@@ -49,7 +53,27 @@ namespace Pagos.Backend.DAL.Services
 
         private string GetUserToken(Usuario user)
         {
-            return "Hi";
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secreto);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                    new Claim[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.IdUsuario.ToString()),
+                        new Claim(ClaimTypes.MobilePhone, user.TelefonoUsuario.ToString()),
+                        new Claim(ClaimTypes.DateOfBirth, user.FechaNacimientoUsuario.ToString())
+                    }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                                                            SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var tokenUser = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(tokenUser);
         }
     }
 }
