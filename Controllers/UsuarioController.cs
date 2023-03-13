@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pagos.Backend.DAL.IServices;
 using Pagos.Backend.DTO;
 using Pagos.Backend.Models.Entity;
@@ -8,6 +9,7 @@ namespace Pagos.Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsuarioController : ControllerBase
     {
         public GenericDTO response;
